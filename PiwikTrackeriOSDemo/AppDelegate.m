@@ -12,12 +12,10 @@
 
 
 static NSString * const PiwikTestServerURL = @"http://localhost/~mattias/piwik/";
-static NSString * const PiwikTestSiteID = @"1";
-static NSString * const PiwikTestAuthenticationToken = @"5d8e854ebf1cc7959bb3b6d111cc5dd6";
+static NSString * const PiwikTestSiteID = @"7";
 
 static NSString * const PiwikProductionServerURL = @"http://someserver.com/piwik/";
 static NSString * const PiwikProductionSiteID = @"23";
-static NSString * const PiwikProductionAuthenticationToken = @"1a3e854ebf1cc7f59bb3b6d123cc7aa5";
 
 
 @implementation AppDelegate
@@ -27,21 +25,20 @@ static NSString * const PiwikProductionAuthenticationToken = @"1a3e854ebf1cc7f59
   
   [[NSUserDefaults standardUserDefaults] registerDefaults:@{PiwikAskedForPermissonKey : @(NO)}];
     
-  // Initialize the Piwik Tracker
+  // Initialise the Piwik Tracker
   // Use different Piwik server urls and tracking site data depending on if building for test or production.
 #ifdef DEBUG
-  [PiwikTracker sharedInstanceWithBaseURL:[NSURL URLWithString:PiwikTestServerURL] siteID:PiwikTestSiteID authenticationToken:PiwikTestAuthenticationToken];
+  [PiwikTracker sharedInstanceWithSiteID:PiwikTestSiteID baseURL:[NSURL URLWithString:PiwikTestServerURL]];
 #else
-  [PiwikTracker sharedInstanceWithBaseURL:[NSURL URLWithString:PiwikProductionServerURL] siteID:PiwikProductionSiteID authenticationToken:PiwikProductionAuthenticationToken];
+  [PiwikTracker sharedInstanceWithSiteID:PiwikTestSiteID baseURL:[NSURL URLWithString:PiwikProductionServerURL]];
 #endif
   
   /* Configure the tracker */
   
-//  [PiwikTracker sharedInstance].debug = YES;
+  [PiwikTracker sharedInstance].debug = YES;
   [PiwikTracker sharedInstance].dispatchInterval = 30;
 //  [PiwikTracker sharedInstance].sampleRate = 50;
 //  [PiwikTracker sharedInstance].eventsPerRequest = 2;
-  [PiwikTracker sharedInstance].includeLocationInformation = YES;
   
   // Do not track anything until the user give consent
   if (![[NSUserDefaults standardUserDefaults] boolForKey:PiwikAskedForPermissonKey]) {
