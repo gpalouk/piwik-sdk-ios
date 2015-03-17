@@ -1500,6 +1500,7 @@ inline NSString* UserDefaultKeyWithSiteID(NSString *siteID, NSString *key) {
   NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
   if (coordinator) {
     _managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    _managedObjectContext.userInfo[@"kMocDetectionId"] = @"PiwikMOC";
     [_managedObjectContext setPersistentStoreCoordinator:coordinator];
   }
   
