@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "PiwikTracker"
-  spec.version      = "3.1.1"
+  spec.version      = "3.3.0"
   spec.summary      = "A Piwik tracker written in Objective-C for iOS and OSX apps."
   spec.homepage     = "https://github.com/piwik/piwik-sdk-ios/"
   spec.license      = { :type => 'MIT', :file => 'LICENSE.md' }
@@ -13,8 +13,9 @@ Pod::Spec.new do |spec|
   
   spec.subspec 'Core' do |core|
   	core.source_files = 'PiwikTracker/*.{h,m}'
- 	core.osx.exclude_files = 'PiwikTracker/PiwikTrackedViewController.{h,m}'
+ 	core.osx.exclude_files = 'PiwikTracker/PiwikTrackedViewController.{h,m}'	
 	core.resources = 'PiwikTracker/piwiktracker.xcdatamodeld'
+	core.preserve_paths = 'PiwikTracker/piwiktracker.xcdatamodeld'
   	core.ios.frameworks = 'Foundation', 'UIKit', 'CoreData', 'CoreLocation', 'CoreGraphics'
   	core.osx.frameworks = 'Foundation', 'Cocoa', 'CoreData', 'CoreGraphics'
   end

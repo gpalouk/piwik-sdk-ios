@@ -1,8 +1,11 @@
 #PiwikTracker iOS SDK
 
-**v3.1.0 adds support for content tracking (ads and banners).**
+**v3.3.0 Setting custom user-agent header is only possible through the PiwikDispatcher.**
 
-**v3.0.0 is released through CocoaPods! v3.0.0 only support Piwik server 2.8 and above. Support for auth_token has been removed due to security reasons and the api for instantiating the tracker has changed slightly. Several new features have been added.**
+**v3.2.3 Added support for custom user-agent header. Renamed a core data entity property due to name conflict.**
+
+**v3.2.0 Added download tracking feature. Bug fixes.**
+
 
 The PiwikTracker is an iOS and OSX SDK for sending app analytics to a Piwik server.
  
@@ -90,7 +93,7 @@ The Piwik SDK is easy to configure and use:
 // Create and configure the tracker in your app delegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {  
   // The website ID is available in Piwik web interface "Settings > Websites"
-  [PiwikTracker sharedInstanceWithBaseURL:[NSURL URLWithString:PiwikServerURL] siteID:PiwikSiteID];
+  [PiwikTracker sharedInstanceWithSiteID:PiwikSiteID baseURL:[NSURL URLWithString:PiwikServerURL]];
   // Any additional configuration goes here
 }
 		
@@ -115,6 +118,12 @@ The Piwik SDK is easy to configure and use:
 // Track goals and conversion rate
 [[PiwikTracker sharedInstance] sendGoalWithID:@"1" revenue:100];
 
+// Track outlinks to external websites and apps
+[[PiwikTracker sharedInstance] sendOutlink:@"anotherapp://somwhere/else?origin=myapp"];
+
+// Track downloaded files and content. Will show in a dedicated section in the Piwik Server
+[[PiwikTracker sharedInstance] sendDownload:@"htttp://someserver.com/image.png"];
+
 // Track ecommerce transactions
 PiwikTransaction *transaction = [PiwikTransaction transactionWithBuilder:^(PiwikTransactionBuilder *builder) {
   builder.identifier =
@@ -129,10 +138,16 @@ campaignURLString = ...
 
 // Track content impressions and interactions with ads and banners
 // Track an impression when the ad is shown
-  [[PiwikTracker sharedInstance] sendContentImpressionWithName:@"DN" piece:@"dn_image.png" taget:@"http://dn.se"];
+[[PiwikTracker sharedInstance] sendContentImpressionWithName:@"DN" piece:@"dn_image.png" taget:@"http://dn.se"];
 // Track an interaction when the user tap on the ad
-  [[PiwikTracker sharedInstance] sendContentInteractionWithName:@"DN" piece:@"dn_image.png" taget:@"http://dn.se"];
+[[PiwikTracker sharedInstance] sendContentInteractionWithName:@"DN" piece:@"dn_image.png" taget:@"http://dn.se"];
 
+// Set a custom user agent profile in requests sent to the Piwik Server
+// This can be used to provide additional information about the users device
+id<PiwikDispatcher> dispatcher = [PiwikTracker sharedInstance].dispatcher;
+if ([dispatcher respondsToSelector:@selector(setUserAgent:)]) {
+  [dispatcher setUserAgent:@"My-User-Agent"];
+}
 ```
 	  	
 Check out the full [API documentation](http://piwik.github.io/piwik-sdk-ios/docs/html/index.html) for additional methods and details.
@@ -248,8 +263,9 @@ Developers can set their own dispatcher by implementing the `PiwikDispatcher` pr
 
 ##Change log
 
+* Version 3.1.1 Bug fixes
 * Version 3.1.0 adds support for content tracking (ads and banners)
-* Version 3.0.0 contains contains major changes. The auth_token has been removed for security reasons and the api for instantiating the tracker has changed slightly. Several new features has been added - custom events, ecommerce tracking, campaigns and more. This version only works with Piwik 2.8 and up. 
+* Version 3.0.0 contains major changes. The auth_token has been removed for security reasons and the api for instantiating the tracker has changed slightly. Several new features has been added - custom events, ecommerce tracking, campaigns and more. This version only works with Piwik 2.8 and up. 
 * Version 2.5.2 contains an important fix for supporting the Piwik 2.0 bulk request API. Users still using Piwik 1.X can enable the old bulk request format by following the [instructions above](#bulk-dispatching).
 * Version 2.5 contains many new features, including tracking social interaction, exceptions and searches. All events are prefixed according to its type to provide grouping and structure in the Piwik web interface. This would be the preferred behaviour for most developers but it can be turned off if interfering with an existing structure.
 * Version 2.0 is a complete rewrite of the PiwikTracker, now based on AFNetworking and supporting CocoaPods. The interface is not backwards compatible, however it should be a small task migrating existing apps.
